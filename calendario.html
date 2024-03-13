@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario</title>
+    <style>
+        body {
+            font-family: Bahnschrift, Arial;
+            background-color: #1a1a1a;
+            margin: 1%;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+        }
+        table {
+            margin: 0 auto;
+            margin-top: 10vw;
+            min-width: 98%;
+            max-width: 98%;
+            border: 1px solid rgb(97, 97, 97);
+            border-collapse: collapse;
+        }
+        thead tr th{
+            background-color: rgb(66, 66, 66);
+            font-size: large;
+            font-weight: bold;
+            color: #fff;
+        }
+        th, td {
+            border: 1px solid rgb(97, 97, 97);    
+            padding: 5px;
+            text-align: center;
+            color: #fff;
+        }
+        th:first-child {
+            width: 22%;
+        }
+        th:nth-child(2){
+            width: 22%;
+        }
+        th:nth-child(3){
+            width: 22%;
+        }
+        th:last-child {
+            width: 34%;
+        }
+        .filter-header button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0;
+            margin: 1% 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            width: 100px;
+            height: 50px;
+            overflow: hidden;
+            align-items: center;
+        }
+        
+        .filter-header button img {
+            width: 70%;
+            height: auto;
+            object-fit: cover;
+            vertical-align: middle;
+            filter: brightness(0) invert(1);
+        }
+        
+        .filter-header button:last-child img {
+            filter: none; /* Remove filter from the last button's image */
+        }
+        
+        .filter-header button:hover {
+            background-color: #555;
+        }
+        .filter-header button.active {
+            background-color: #666;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>CALENDARIO</h1>
+    <div class="filter-header">
+        <button class="filter-btn" data-championship="all" >TUTTI</button>
+        <button class="filter-btn" data-championship="MOTOGP"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Moto_Gp_logo.svg/800px-Moto_Gp_logo.svg.png" alt="MOTOGP"></button>
+        <button class="filter-btn" data-championship="FORMULA 1"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/1280px-F1.svg.png" alt="FORMULA 1"></button>
+        <button class="filter-btn" data-championship="INDYCAR"><img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/IndyCar_Series_textlogo.svg" alt="INDYCAR"></button>
+        <button class="filter-btn" data-championship="MOTO2"><img src="https://upload.wikimedia.org/wikipedia/it/6/6a/Moto2_logo.png" alt="MOTO2"></button>
+        <button class="filter-btn" data-championship="MOTO3"><img src="https://www.snipersteam.com/wp-content/uploads/2022/02/1-moto3.png" alt="MOTO3"></button>
+        <button class="filter-btn" data-championship="FORMULA 2"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/FIA_Formula_2_Championship_logo.svg/2560px-FIA_Formula_2_Championship_logo.svg.png" alt="FORMULA 2"></button>
+        <button class="filter-btn" data-championship="FORMULA 3"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/FIA_F3_Championship_logo.png" alt="FORMULA 3"></button>
+        <button class="filter-btn" data-championship="SUPERBIKE"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Superbike_World_Championship_logo_%28stacked%2C_2022%29.svg/2560px-Superbike_World_Championship_logo_%28stacked%2C_2022%29.svg.png" alt="SUPERBIKE"></button>
+        <button class="filter-btn" data-championship="FORMULA E"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Formula-e-logo-championship_2023.svg/2560px-Formula-e-logo-championship_2023.svg.png" alt="FORMULA E"></button>
+        <button class="filter-btn" data-championship="MOTOE"><img src="https://seeklogo.com/images/M/moto-e-moto-e-motogp-logo-FE696FBB96-seeklogo.com.png" alt="MOTOE"></button>
+        <button class="filter-btn" data-championship="WEC"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/FIA_WEC_Logo_2019.svg/1200px-FIA_WEC_Logo_2019.svg.png" alt="WEC"></button>
+        <button class="filter-btn" data-championship="WRC"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/WRC.svg/2560px-WRC.svg.png" alt="WRC"></button>
+        <button class="filter-btn" data-championship="FRECA"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Formula_Regional_European_01.svg/2560px-Formula_Regional_European_01.svg.png" alt="FRECA"></button>
+        <button class="filter-btn" data-championship="F4 ITA"><img src="https://img.redbull.com/images/e_trim:10:transparent/c_limit,w_1000,h_1000/bo_5px_solid_rgb:00000000/q_auto,f_png/redbullcom/2023/1/24/qekb7iff9kmtwq7vxjmx/formula-4-italian" alt="F4 ITA"></button>
+        <button class="filter-btn" data-championship="FRMEC"><img src="https://liquipedia.net/commons/images/thumb/a/a1/Formula_Regional_Middle_East_lightmode.png/600px-Formula_Regional_Middle_East_lightmode.png" alt="FRMEC"></button>
+        <button class="filter-btn" data-championship="F4 UAE"><img src="https://upload.wikimedia.org/wikipedia/en/d/db/Formula_4_UAE_Championship_logo_%282019_onwards%29.png" alt="F4 UAE"></button>
+        <button class="filter-btn" data-championship="MX5"><img src="https://cvf69e.p3cdn2.secureserver.net/wp-content/uploads/2024/01/MX-5-Cup-2024-logo-White-no-Background-6500.png" alt="MX5"></button>
+        <button class="filter-btn" data-championship="STT/TSS"><img src="https://absoluteracing.net/images/logo/bquik-thailand-super-series-darkbg.png" alt="STT/TSS"></button>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Campionato</th>
+                <th>Evento</th>
+                <th>Vincitore (overall)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>12-13/01</td>
+                <td>FORMULA E</td>
+                <td>Messico</td>
+                <td style="background-color: #a2a2a2; color: #fff">Pascal Wehrlein</td>
+            </tr>
+            <tr>
+                <td>12-14/01</td>
+                <td>FRMEC</td>
+                <td>Abu Dhabi 1</td>
+                <td style="background-color: #482505; color: #00ff00">Taylor Barnard</td>
+            </tr>
+            <tr>
+                <td>12-14/01</td>
+                <td>F4 UAE</td>
+                <td>Abu Dhabi 1</td>
+                <td style="background-color: #0200a2; color: #ff8f33">Freddie Slater</td>
+            </tr>
+            <tr>
+                <td>19-21/01</td>
+                <td>FRMEC</td>
+                <td>Abu Dhabi 2</td>
+                <td style="background-color: #000; color: #fff">Tuukka Taponen</td>
+            </tr>
+            <tr>
+                <td>19-21/01</td>
+                <td>F4 UAE</td>
+                <td>Abu Dhabi 2</td>
+                <td style="background-color: #0200a2; color: #ff8f33">Freddie Slater</td>
+            </tr>
+            <tr>
+                <td>25-26/01</td>
+                <td>FORMULA E</td>
+                <td>Arabia Saudita 1</td>
+                <td style="background-color: #fff; color: #ff0007">Jake Dennis</td>
+            </tr>
+            <tr>
+                <td>27/01</td>
+                <td>FORMULA E</td>
+                <td>Arabia Saudita 2</td>
+                <td style="background-color: #000; color: #fff">Nick Cassidy</td>
+            </tr>
+            <tr>
+                <td>25-28/01</td>
+                <td>WRC</td>
+                <td>Monaco</td>
+                <td style="background-color: #80b1d4; color: #ff0000">Thierry Neuville</td>
+            </tr>
+            <tr>
+                <td>24-26/01</td>
+                <td>MX5</td>
+                <td>Daytona</td>
+                <td style="background-color: #000; color: #003bff">Gresham Wagner</td>
+            </tr>
+            <tr>
+                <td>02-04/02</td>
+                <td>FRMEC</td>
+                <td>Dubai 1</td>
+                <td style="background-color: #0200a2; color: #ff8f33">Rafael Câmara</td>
+            </tr>
+            <tr>
+                <td>02-04/02</td>
+                <td>F4 UAE</td>
+                <td>Dubai 1</td>
+                <td style="background-color: #482505; color: #00ff00">Nikita Bedrin</td>
+            </tr>
+            <tr>
+                <td>09-11/02</td>
+                <td>FRMEC</td>
+                <td>Abu Dhabi 3</td>
+                <td style="background-color: #000; color: #fff">Tuukka Taponen</td>
+            </tr>
+            <tr>
+                <td>09-11/02</td>
+                <td>F4 UAE</td>
+                <td>Abu Dhabi 3</td>
+                <td style="background-color: #000; color: #3fa1e9">Rashid Al Dhaheri</td>
+            </tr>
+            <tr>
+                <td>15-18/02</td>
+                <td>WRC</td>
+                <td>Svezia</td>
+                <td style="background-color: #000; color: #fff">Elfyn Evans</td>
+            </tr>
+            <tr>
+                <td>16-18/02</td>
+                <td>FRMEC</td>
+                <td>Dubai 2</td>
+                <td style="background-color: #000; color: #fff">Tuukka Taponen</td>
+            </tr>
+            <tr>
+                <td>16-18/02</td>
+                <td>F4 UAE</td>
+                <td>Dubai 2</td>
+                <td style="background-color: #0200a2; color: #ff8f33">Kean Nakamura-Berta</td>
+            </tr>
+            <tr>
+                <td>25-26/02</td>
+                <td>SUPERBIKE</td>
+                <td>Australia</td>
+                <td style="background-color: #0fff00; color: #fff">Alex Lowes</td></td>
+            </tr>
+            <tr>
+                <td>29/02 – 02/03</td>
+                <td>FORMULA 1</td>
+                <td>Bahrain</td>
+                <td style="background-color: #00005f; color: #e20620">Max Verstappen</td>
+            </tr>
+            <tr>
+                <td>29/02 – 02/03</td>
+                <td>FORMULA 2</td>
+                <td>Bahrain</td>
+                <td style="background-color: #0cb400; color: #000">Zane Maloney</td>
+            </tr>
+            <tr>
+                <td>29/02 – 02/03</td>
+                <td>FORMULA 3</td>
+                <td>Bahrain</td>
+                <td style="background-color: #003bff; color: #000">Luke Browning</td>
+            </tr>
+            <tr>
+                <td>29/02 – 02/03</td>
+                <td>WEC</td>
+                <td>Qatar</td>
+                <td style="background-color: #ff0007; color: #fff">Porsche Penske #6 (Kévin Estre, André Lotterer, Laurens Vanthoor)</td>
+            </tr>
+            <tr>
+                <td>07-09/03</td>
+                <td>FORMULA 1</td>
+                <td>Arabia Saudita</td>
+                <td style="background-color: #00005f; color: #e20620">Max Verstappen</td>
+            </tr>
+            <tr>
+                <td>08-10/03</td>
+                <td>INDYCAR</td>
+                <td>St Petersburg</td>
+                <td style="background-color: #00a8ff; color: #fff">Josef Newgarden</td>
+            </tr>
+            <tr>
+                <td>08-10/03</td>
+                <td>MOTOGP</td>
+                <td>Qatar</td>
+                <td style="background-color: #7f00fe; color: #ff0000">Jorge Martín</td>
+            </tr>
+            <tr>
+                <td>08-10/03</td>
+                <td>MOTO2</td>
+                <td>Qatar</td>
+                <td style="background-color: #0080e1; color: #000">Alonso López</td>
+            </tr>
+            <tr>
+                <td>08-10/03</td>
+                <td>MOTO3</td>
+                <td>Qatar</td>
+                <td style="background-color: #c70000; color: #000">Daniel Holgado</td>
+            </tr>
+            <tr>
+                <td>07-09/03</td>
+                <td>FORMULA 2</td>
+                <td>Arabia Saudita</td>
+                <td style="background-color: #ff7300; color: #000">Pietro Fittipaldi</td>
+            </tr>
+            <tr>
+                <td>08-10/03</td>
+                <td>STT/TSS</td>
+                <td>Buriram (STT)</td>
+                <td style="background-color: #000; color: #fff">Samon Mapakhe</td>
+            </tr>
+            <tr>
+                <td>15-16/03</td>
+                <td>FORMULA E</td>
+                <td>Brasile</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/03</td>
+                <td>MX5</td>
+                <td>Sebring</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>FORMULA 1</td>
+                <td>Australia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>INDYCAR</td>
+                <td>Thermal Club</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>MOTOGP</td>
+                <td>Portogallo</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>MOTO2</td>
+                <td>Portogallo</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>MOTO3</td>
+                <td>Portogallo</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>FORMULA 2</td>
+                <td>Australia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>FORMULA 3</td>
+                <td>Australia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-24/03</td>
+                <td>SUPERBIKE</td>
+                <td>Catalunya</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>22-23/03</td>
+                <td>MOTOE</td>
+                <td>Portogallo</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29-30/03</td>
+                <td>FORMULA E</td>
+                <td>Giappone</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-31/03</td>
+                <td>WRC</td>
+                <td>Kenya</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/04</td>
+                <td>FORMULA 1</td>
+                <td>Giappone</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/04</td>
+                <td>MOTOGP</td>
+                <td>Stati Uniti</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/04</td>
+                <td>MOTO2</td>
+                <td>Stati Uniti</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/04</td>
+                <td>MOTO3</td>
+                <td>Stati Uniti</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-13/04</td>
+                <td>FORMULA E</td>
+                <td>Italia 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14/04</td>
+                <td>FORMULA E</td>
+                <td>Italia 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/04</td>
+                <td>FORMULA 1</td>
+                <td>Cina</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/04</td>
+                <td>INDYCAR</td>
+                <td>Long Beach</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/04</td>
+                <td>SUPERBIKE</td>
+                <td>Olanda</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>18-21/04</td>
+                <td>WRC</td>
+                <td>Croazia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/04</td>
+                <td>WEC</td>
+                <td>Imola</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/04</td>
+                <td>MOTOGP</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/04</td>
+                <td>INDYCAR</td>
+                <td>Barber</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/04</td>
+                <td>MOTO2</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/04</td>
+                <td>MOTO3</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-27/04</td>
+                <td>FORMULA E</td>
+                <td>Monaco</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>03-05/05</td>
+                <td>FORMULA 1</td>
+                <td>Miami</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>03-05/05</td>
+                <td>F4 ITA</td>
+                <td>Misano</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>03-05/05</td>
+                <td>STT/TSS</td>
+                <td>Buriram (TSS)</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-11/05</td>
+                <td>INDYCAR</td>
+                <td>Indianapolis</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-12/05</td>
+                <td>MOTOGP</td>
+                <td>Francia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-12/05</td>
+                <td>MOTO2</td>
+                <td>Francia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-12/05</td>
+                <td>MOTO3</td>
+                <td>Francia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-11/05</td>
+                <td>MOTOE</td>
+                <td>Francia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-11/05</td>
+                <td>FORMULA E</td>
+                <td>Germania 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12/05</td>
+                <td>FORMULA E</td>
+                <td>Germania 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>09-11/05</td>
+                <td>WEC</td>
+                <td>Spa-Francorchamps</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>09-12/05</td>
+                <td>WRC</td>
+                <td>Portogallo</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-12/05</td>
+                <td>FRECA</td>
+                <td>Hockenheim</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>10-12/05</td>
+                <td>MX5</td>
+                <td>Laguna Seca</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>17-19/05</td>
+                <td>FORMULA 1</td>
+                <td>Emilia Romagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>17-19/05</td>
+                <td>FORMULA 2</td>
+                <td>Emilia Romagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>17-19/05</td>
+                <td>FORMULA 3</td>
+                <td>Emilia Romagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>17-19/05</td>
+                <td>STT/TSS</td>
+                <td>Buriram (STT)</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>FORMULA 1</td>
+                <td>Monaco</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>MOTOGP</td>
+                <td>Catalunya</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14-26/05</td>
+                <td>INDYCAR</td>
+                <td>Indianapolis 500</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>MOTO2</td>
+                <td>Catalunya</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>MOTO3</td>
+                <td>Catalunya</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>FORMULA 2</td>
+                <td>Monaco</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>FORMULA 3</td>
+                <td>Monaco</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-25/05</td>
+                <td>MOTOE</td>
+                <td>Catalunya</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-25/05</td>
+                <td>FORMULA E</td>
+                <td>Cina 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26/05</td>
+                <td>FORMULA E</td>
+                <td>Cina 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>24-26/05</td>
+                <td>FRECA</td>
+                <td>Spa-Francorchamps</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/05 – 02/06</td>
+                <td>MOTOGP</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/05 – 02/06</td>
+                <td>INDYCAR</td>
+                <td>Detroit</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/05 – 02/06</td>
+                <td>MOTO2</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/05 – 02/06</td>
+                <td>MOTO3</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/05 – 01/06</td>
+                <td>MOTOE</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>30-05 – 02/06</td>
+                <td>WRC</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/05 – 02/06</td>
+                <td>F4 ITA</td>
+                <td>Imola</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>07-09/06</td>
+                <td>FORMULA 1</td>
+                <td>Canada</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>07-09/06</td>
+                <td>INDYCAR</td>
+                <td>Road America</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>07-09/06</td>
+                <td>FRECA</td>
+                <td>Zandvoort</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>07-09/06</td>
+                <td>MX5</td>
+                <td>Mid-Ohio</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14-16/06</td>
+                <td>MOTOGP</td>
+                <td>Kazakistan</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14-16/06</td>
+                <td>MOTO2</td>
+                <td>Kazakistan</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14-16/06</td>
+                <td>MOTO3</td>
+                <td>Kazakistan</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14-16/06</td>
+                <td>SUPERBIKE</td>
+                <td>Emilia Romagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>15-16/06</td>
+                <td>WEC</td>
+                <td>Le Mans</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>14-16/06</td>
+                <td>F4 ITA</td>
+                <td>Vallelunga</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-23/06</td>
+                <td>FORMULA 1</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-23/06</td>
+                <td>INDYCAR</td>
+                <td>Laguna Seca</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-23/06</td>
+                <td>FORMULA 2</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-23/06</td>
+                <td>FORMULA 3</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-20/06</td>
+                <td>FORMULA E</td>
+                <td>Regno Unito 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21/06</td>
+                <td>FORMULA E</td>
+                <td>Regno Unito 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-23/06</td>
+                <td>FRECA</td>
+                <td>Hungaroring</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-30/06</td>
+                <td>FORMULA 1</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-30/06</td>
+                <td>MOTOGP</td>
+                <td>Olanda</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-30/06</td>
+                <td>MOTO2</td>
+                <td>Olanda</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-30/06</td>
+                <td>MOTO3</td>
+                <td>Olanda</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-30/06</td>
+                <td>FORMULA 2</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-30/06</td>
+                <td>FORMULA 3</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-29/06</td>
+                <td>MOTOE</td>
+                <td>Olanda</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>28-29/06</td>
+                <td>FORMULA E</td>
+                <td>Stati Uniti</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-30/06</td>
+                <td>WRC</td>
+                <td>Polonia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>FORMULA 1</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>MOTOGP</td>
+                <td>Germania</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>INDYCAR</td>
+                <td>Mid-Ohio</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>MOTO2</td>
+                <td>Germania</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>MOTO3</td>
+                <td>Germania</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>FORMULA 2</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-07/07</td>
+                <td>FORMULA 3</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-06/07</td>
+                <td>MOTOE</td>
+                <td>Germania</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>03-07/07</td>
+                <td>STT/TSS</td>
+                <td>Bangsaen (TSS)</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-13/07</td>
+                <td>INDYCAR</td>
+                <td>Iowa 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-14/07</td>
+                <td>INDYCAR</td>
+                <td>Iowa 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/07</td>
+                <td>SUPERBIKE</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/07</td>
+                <td>WEC</td>
+                <td>Interlagos</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/07</td>
+                <td>FRECA</td>
+                <td>Mugello</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/07</td>
+                <td>F4 ITA</td>
+                <td>Mugello</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>12-14/07</td>
+                <td>MX5</td>
+                <td>Mosport</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>FORMULA 1</td>
+                <td>Ungheria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>INDYCAR</td>
+                <td>Toronto</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>FORMULA 2</td>
+                <td>Ungheria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>FORMULA 3</td>
+                <td>Ungheria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>SUPERBIKE</td>
+                <td>Repubblica Ceca</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>18-21/07</td>
+                <td>WRC</td>
+                <td>Lettonia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>FRECA</td>
+                <td>Paul Ricard</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>F4 ITA</td>
+                <td>Paul Ricard</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>19-21/07</td>
+                <td>STT/TSS</td>
+                <td>Buriram (STT)</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/07</td>
+                <td>FORMULA 1</td>
+                <td>Belgio</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/07</td>
+                <td>FORMULA 2</td>
+                <td>Belgio</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-28/07</td>
+                <td>FORMULA 3</td>
+                <td>Belgio</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>02-04/08</td>
+                <td>MOTOGP</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>02-04/08</td>
+                <td>MOTO2</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>02-04/08</td>
+                <td>MOTO3</td>
+                <td>Regno Unito</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>01-04/08</td>
+                <td>WRC</td>
+                <td>Finlandia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>09-11/08</td>
+                <td>SUPERBIKE</td>
+                <td>Portogallo</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>16-18/08</td>
+                <td>MOTOGP</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>15-17/08</td>
+                <td>INDYCAR</td>
+                <td>Gateway</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>16-18/08</td>
+                <td>MOTO2</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>16-18/08</td>
+                <td>MOTO3</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>16-17/08</td>
+                <td>MOTOE</td>
+                <td>Austria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>23-25/08</td>
+                <td>FORMULA 1</td>
+                <td>Olanda</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>23-25/08</td>
+                <td>INDYCAR</td>
+                <td>Portland</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>23-25/08</td>
+                <td>SUPERBIKE</td>
+                <td>Ungheria</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>23-25/08</td>
+                <td>MX5</td>
+                <td>Virginia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>23-25/08</td>
+                <td>STT/TSS</td>
+                <td>Buriram (TSS)</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>30-31/08</td>
+                <td>INDYCAR</td>
+                <td>Milwaukee 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/08 – 01/09</td>
+                <td>FORMULA 1</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/08 – 01/09</td>
+                <td>MOTOGP</td>
+                <td>Aragon</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/08 – 01/09</td>
+                <td>INDYCAR</td>
+                <td>Milwaukee 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/08 – 01/09</td>
+                <td>MOTO2</td>
+                <td>Aragon</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/08 – 01/09</td>
+                <td>MOTO3</td>
+                <td>Aragon</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/08 – 01/09</td>
+                <td>FORMULA 2</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/08 – 01/09</td>
+                <td>FORMULA 3</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>30/08 – 01/09</td>
+                <td>WEC</td>
+                <td>Austin</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/09</td>
+                <td>MOTOGP</td>
+                <td>San Marino</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/09</td>
+                <td>MOTO2</td>
+                <td>San Marino</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/09</td>
+                <td>MOTO3</td>
+                <td>San Marino</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/09</td>
+                <td>SUPERBIKE</td>
+                <td>Francia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-07/09</td>
+                <td>MOTOE</td>
+                <td>San Marino</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>05-08/09</td>
+                <td>WRC</td>
+                <td>Grecia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/09</td>
+                <td>FRECA</td>
+                <td>Imola</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/09</td>
+                <td>FORMULA 1</td>
+                <td>Azerbaijan</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/09</td>
+                <td>INDYCAR</td>
+                <td>Nashville</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/09</td>
+                <td>FORMULA 2</td>
+                <td>Azerbaijan</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/09</td>
+                <td>WEC</td>
+                <td>Fuji</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/09</td>
+                <td>FRECA</td>
+                <td>Red Bull Ring</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>20-22/09</td>
+                <td>FORMULA 1</td>
+                <td>Singapore</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>20-22/09</td>
+                <td>MOTOGP</td>
+                <td>India</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>20-22/09</td>
+                <td>MOTO2</td>
+                <td>India</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>20-22/09</td>
+                <td>MOTO3</td>
+                <td>India</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>20-21/09</td>
+                <td>SUPERBIKE</td>
+                <td>Italia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-29/09</td>
+                <td>MOTOGP</td>
+                <td>Indonesia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-29/09</td>
+                <td>MOTO2</td>
+                <td>Indonesia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-29/09</td>
+                <td>MOTO3</td>
+                <td>Indonesia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-29/09</td>
+                <td>SUPERBIKE</td>
+                <td>Aragon</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>26-29/09</td>
+                <td>WRC</td>
+                <td>Cile</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-29/09</td>
+                <td>FRECA</td>
+                <td>Barcellona</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>27-29/09</td>
+                <td>F4 ITA</td>
+                <td>Barcellona</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>04-06/10</td>
+                <td>MOTOGP</td>
+                <td>Giappone</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>04-06/10</td>
+                <td>MOTO2</td>
+                <td>Giappone</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>04-06/10</td>
+                <td>MOTO3</td>
+                <td>Giappone</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>09-11/10</td>
+                <td>MX5</td>
+                <td>Road Atlanta</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>11-13/10</td>
+                <td>SUPERBIKE</td>
+                <td>Spagna</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>18-20/10</td>
+                <td>FORMULA 1</td>
+                <td>Stati Uniti</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>18-20/10</td>
+                <td>MOTOGP</td>
+                <td>Australia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>18-20/10</td>
+                <td>MOTO2</td>
+                <td>Australia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>18-20/10</td>
+                <td>MOTO3</td>
+                <td>Australia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>25-27/10</td>
+                <td>FORMULA 1</td>
+                <td>Messico</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>25-27/10</td>
+                <td>MOTOGP</td>
+                <td>Thailandia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>25-27/10</td>
+                <td>MOTO2</td>
+                <td>Thailandia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>25-27/10</td>
+                <td>MOTO3</td>
+                <td>Thailandia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>25-27/10</td>
+                <td>FRECA</td>
+                <td>Monza</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>25-27/10</td>
+                <td>F4 ITA</td>
+                <td>Monza</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>01-03/11</td>
+                <td>FORMULA 1</td>
+                <td>Brasile</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>01-03/11</td>
+                <td>MOTOGP</td>
+                <td>Malesia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>01-03/11</td>
+                <td>MOTO2</td>
+                <td>Malesia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>01-03/11</td>
+                <td>MOTO3</td>
+                <td>Malesia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/10 – 02/11</td>
+                <td>WEC</td>
+                <td>Bahrain</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>31/10 – 03/11</td>
+                <td>WRC</td>
+                <td>Europa</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>15-17/11</td>
+                <td>MOTOGP</td>
+                <td>Valencia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>15-17/11</td>
+                <td>MOTO2</td>
+                <td>Valencia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>15-17/11</td>
+                <td>MOTO3</td>
+                <td>Valencia</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-23/11</td>
+                <td>FORMULA 1</td>
+                <td>Abu Dhabi</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21-24/11</td>
+                <td>WRC</td>
+                <td>Giappone</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/11 – 02/12</td>
+                <td>FORMULA 1</td>
+                <td>Qatar</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>29/11 – 02/12</td>
+                <td>FORMULA 2</td>
+                <td>Qatar</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/12</td>
+                <td>FORMULA 1</td>
+                <td>Abu Dhabi</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>06-08/12</td>
+                <td>FORMULA 2</td>
+                <td>Abu Dhabi</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>13-15/12</td>
+                <td>STT/TSS</td>
+                <td>Buriram (TSS)</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <script>
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const championship = btn.getAttribute('data-championship');
+                filterTable(championship);
+                removeActiveClass();
+                btn.classList.add('active');
+            });
+        });
+
+        function filterTable(championship) {
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const championshipCell = row.cells[1];
+                if (championship === 'all' || championshipCell.textContent === championship) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function removeActiveClass() {
+            filterBtns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+    </script>
+</body>
+
+</html>
