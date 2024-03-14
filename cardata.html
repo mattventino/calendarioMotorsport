@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Grouped by Car</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <p><a href="index.html">Ritorna alla homepage</a></p>
+
+    <h2>Results Grouped by Car</h2>
+
+    <h3>Add Cars</h3>
+    <textarea id="carInput" rows="5" cols="50" placeholder="Enter Car Names (one per line)"></textarea><br><br>
+
+    <h3>Add Tracks Raced On</h3>
+    <textarea id="trackInput" rows="5" cols="50"
+        placeholder="Enter Tracks Raced On (comma or newline separated)"></textarea><br><br>
+
+    <h3>Add Qualify Results</h3>
+    <textarea id="qualifyInput" rows="5" cols="50"
+        placeholder="Enter Qualify Results (comma or newline separated)"></textarea><br><br>
+
+    <h3>Add Race Results</h3>
+    <textarea id="raceInput" rows="5" cols="50"
+        placeholder="Enter Race Results (comma or newline separated)"></textarea><br><br>
+
+    <h3>Add Number of Laps Led</h3>
+    <textarea id="lapsLedInput" rows="5" cols="50"
+        placeholder="Enter Number of Laps Led (comma or newline separated)"></textarea><br><br>
+
+    <button onclick="processResults()">Process Results</button>
+
+    <h3>Results by Car</h3>
+    <table id="resultTable">
+        <tr>
+            <th>Car</th>
+            <th>Qualify Results</th>
+            <th>Race Results</th>
+            <th>Tracks</th>
+        </tr>
+    </table>
+
+    <h2>Wins</h2>
+    <h3>Car</h3>
+    <table id="winsTable">
+        <tr>
+            <th>Car</th>
+            <th>Wins</th>
+        </tr>
+    </table>
+    <h3>Manufacturer</h3>
+    <table id="winsByManufacturerTable">
+        <tr>
+            <th>Manufacturer</th>
+            <th>Wins</th>
+        </tr>
+    </table>
+    <h3>Nation</h3>
+    <table id="winsByNationalityTable">
+        <tr>
+            <th>Nationality</th>
+            <th>Wins</th>
+        </tr>
+    </table>
+
+
+    <h2>Pole positions</h2>
+    <h3>Car</h3>
+    <table id="polePositionsTable">
+        <tr>
+            <th>Car</th>
+            <th>Pole Positions</th>
+        </tr>
+    </table>
+
+    <h3>Manufacturer</h3>
+    <table id="polePositionsByManufacturerTable">
+        <tr>
+            <th>Manufacturer</th>
+            <th>Pole Positions</th>
+        </tr>
+    </table>
+    <h3>Nation</h3>
+    <table id="polePositionsByNationalityTable">
+        <tr>
+            <th>Nationality</th>
+            <th>Pole Positions</th>
+        </tr>
+    </table>
+
+    <h2>Podiums</h2>
+    <h3>Car</h3>
+    <table id="podiumsTable">
+        <tr>
+            <th>Car</th>
+            <th>Podiums</th>
+        </tr>
+    </table>
+    <h3>Manufacturer</h3>
+    <table id="podiumsByManufacturerTable">
+        <tr>
+            <th>Manufacturer</th>
+            <th>Podiums</th>
+        </tr>
+    </table>
+
+    <h3>Nation</h3>
+    <table id="podiumsByNationalityTable">
+        <tr>
+            <th>Nationality</th>
+            <th>Podiums</th>
+        </tr>
+    </table>
+
+
+    <h2>Races</h2>
+    <h3>Car</h3>
+    <table id="racesDoneTable">
+        <tr>
+            <th>Car</th>
+            <th>Races</th>
+        </tr>
+    </table>
+
+    <h3>Manufacturer</h3>
+    <table id="racesDoneByManufacturerTable">
+        <tr>
+            <th>Manufacturer</th>
+            <th>Races</th>
+        </tr>
+    </table>
+
+    <h3>Nation</h3>
+    <table id="racesDoneByNationalityTable">
+        <tr>
+            <th>Nationality</th>
+            <th>Races</th>
+        </tr>
+    </table>
+
+    <h2>Laps Led</h2>
+    <h3>Car</h3>
+    <table id="lapsLedTable">
+        <tr>
+            <th>Car</th>
+            <th>Laps Led</th>
+        </tr>
+    </table>
+
+
+    <h3>Manufacturer</h3>
+    <table id="lapsLedByManufacturerTable">
+        <tr>
+            <th>Manufacturer</th>
+            <th>Laps Led</th>
+        </tr>
+    </table>
+
+    <h3>Nation</h3>
+    <table id="lapsLedByNationalityTable">
+        <tr>
+            <th>Nationality</th>
+            <th>Laps Led</th>
+        </tr>
+    </table>
+
+    <script>
+        function processResults() {
+            let carInput = document.getElementById('carInput').value.trim().split('\n').map(car => car.trim());
+            const qualifyInput = document.getElementById('qualifyInput').value.trim().split('\n').map(result => result.trim());
+            const raceInput = document.getElementById('raceInput').value.trim().split('\n').map(result => result.trim());
+            const trackInput = document.getElementById('trackInput').value.trim().split('\n').map(track => track.trim());
+            const lapsLedInput = document.getElementById('lapsLedInput').value.trim().split('\n').map(laps => laps.trim());
+
+            // Create an object to store data grouped by car
+            const carsData = {};
+
+            // Group the input data by car
+            for (let i = 0; i < carInput.length; i++) {
+                const car = carInput[i];
+                const qualifyResult = qualifyInput[i] ? qualifyInput[i].split(',').map(r => parseInt(r.trim())) : [];
+                const raceResult = raceInput[i] ? raceInput[i].split(',').map(r => parseInt(r.trim())) : [];
+                const track = trackInput[i] || '';
+                const lapsLed = lapsLedInput[i] ? parseInt(lapsLedInput[i]) : 0;
+
+                if (!carsData[car]) {
+                    carsData[car] = {
+                        qualify: [],
+                        race: [],
+                        tracks: new Set(),
+                        winners: [],
+                        lapsLed: 0
+                    };
+                }
+
+                carsData[car].qualify = carsData[car].qualify.concat(qualifyResult);
+                carsData[car].race = carsData[car].race.concat(raceResult);
+                carsData[car].tracks.add(track);
+                carsData[car].lapsLed += lapsLed;
+
+                // Check if the race has been won
+                if (raceResult.includes(1)) {
+                    carsData[car].winners.push(track);
+                }
+            }
+
+            // Sort car names alphabetically
+            carInput = Object.keys(carsData).sort((a, b) => a.localeCompare(b));
+
+            const resultTable = document.getElementById('resultTable');
+            resultTable.innerHTML = ''; // Clear existing table
+
+            // Display data in the table
+            carInput.forEach(car => {
+                const carData = carsData[car];
+                const row = resultTable.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                cell1.textContent = car;
+                cell2.textContent = carData.qualify.sort((a, b) => a - b).map(result => result + '°').join(', ');
+                cell3.textContent = carData.race.sort((a, b) => a - b).map(result => result + '°').join(', ');
+
+                // Highlight the tracks where the race has been won
+                const tracks = [...carData.tracks].sort().map(track => {
+                    if (carData.winners.includes(track)) {
+                        return `<b>${track}</b>`;
+                    } else {
+                        return track;
+                    }
+                });
+                cell4.innerHTML = tracks.join(', ');
+            });
+
+            // Calculate car statistics
+            const carStats = calculateCarStats(carsData);
+
+            // Generate tables for car statistics
+            generateTable(carStats.wins, 'winsTable');
+            generateTable(carStats.polePositions, 'polePositionsTable');
+            generateTable(carStats.podiums, 'podiumsTable');
+            generateTable(carStats.racesDone, 'racesDoneTable');
+            generateTable(carStats.lapsLed, 'lapsLedTable');
+
+            // Calculate manufacturer statistics
+            const manufacturersStats = calculateManufacturerStats(carsData);
+
+            // Generate tables for manufacturer statistics
+            generateTable(manufacturersStats.wins, 'winsByManufacturerTable');
+            generateTable(manufacturersStats.polePositions, 'polePositionsByManufacturerTable');
+            generateTable(manufacturersStats.podiums, 'podiumsByManufacturerTable');
+            generateTable(manufacturersStats.racesDone, 'racesDoneByManufacturerTable');
+            generateTable(manufacturersStats.lapsLed, 'lapsLedByManufacturerTable');
+
+            // Generate tables for nationality statistics
+            const nationalityStats = calculateNationalityStats(carsData);
+
+            generateTable(nationalityStats.wins, 'winsByNationalityTable');
+            generateTable(nationalityStats.polePositions, 'polePositionsByNationalityTable');
+            generateTable(nationalityStats.podiums, 'podiumsByNationalityTable');
+            generateTable(nationalityStats.racesDone, 'racesDoneByNationalityTable');
+            generateTable(nationalityStats.lapsLed, 'lapsLedByNationalityTable');
+        }
+
+        function calculateCarStats(carsData) {
+            const stats = {
+                wins: {},
+                polePositions: {},
+                podiums: {},
+                racesDone: {},
+                lapsLed: {}
+            };
+
+            Object.keys(carsData).forEach(car => {
+                stats.wins[car] = carsData[car].winners.length;
+                stats.polePositions[car] = carsData[car].qualify.filter(pos => pos === 1).length;
+                stats.podiums[car] = carsData[car].race.filter(pos => pos <= 3).length;
+                stats.racesDone[car] = carsData[car].race.length;
+                stats.lapsLed[car] = carsData[car].lapsLed;
+            });
+
+            return stats;
+        }
+
+        function calculateManufacturerStats(carsData) {
+            const manufacturers = {
+                "Abarth 500 Assetto Corse": "Abarth",
+                "Alfa Romeo 155 TI V6": "Alfa Romeo",
+                "Alfa Romeo 33TT12": "Alfa Romeo",
+                "Alfa Romeo 4C": "Alfa Romeo",
+                "Alfa Romeo Giulia TI Super": "Alfa Romeo",
+                "Alfa Romeo GTAM": "Alfa Romeo",
+                "Audi R8 LMS 2016": "Audi",
+                "Audi Sport quattro S1": "Audi",
+                "Audi TT Cup": "Audi",
+                "Audi TT RS VLN": "Audi",
+                "Austin Mini Cooper S": "Mini",
+                "BMW M1 S3": "BMW",
+                "BMW M235i": "BMW",
+                "BMW M3 E30 DTM": "BMW",
+                "BMW M3 E30 S1": "BMW",
+                "BMW Z4 Drift": "BMW",
+                "BMW Z4 GT3": "BMW",
+                "Camotos Kawasaki ER-6": "Camotos",
+                "Caterham Academy": "Caterham",
+                "Chevrolet Camaro EuroNascar": "Chevrolet",
+                "Chevrolet Corvette C6R": "Chevrolet",
+                "Chevrolet Corvette C7R": "Chevrolet",
+                "Chevrolet Corvette DP": "Chevrolet",
+                "Chevrolet Cruze TN": "Chevrolet",
+                "Cupra Leon Competicion": "Cupra",
+                "Dallara F3 2019": "Dallara",
+                "Dallara F317": "Dallara",
+                "Dallara GP2/11": "Dallara",
+                "Dallara GP3/13": "Dallara",
+                "Dallara IL-15": "Dallara",
+                "De Tomaso Pantera Gr.4": "De Tomaso",
+                "Delage 15S8 Dick Seaman Special": "Delage",
+                "Dodge Viper RT/10": "Dodge",
+                "Duqueine D08 LMP3": "Duqueine",
+                "Ferrari 250 GTO": "Ferrari",
+                "Ferrari 288 GTO": "Ferrari",
+                "Ferrari 312/67": "Ferrari",
+                "Ferrari 312T": "Ferrari",
+                "Ferrari 458 GT2": "Ferrari",
+                "Ferrari 488 GT3": "Ferrari",
+                "Ferrari 643": "Ferrari",
+                "Ferrari F2007": "Ferrari",
+                "Ferrari LaFerrari": "Ferrari",
+                "Fiat Panda": "Fiat",
+                "Fiat Tipo Competizione": "Fiat",
+                "Fiat Tipo Top Car": "Fiat",
+                "Ford Escort RS": "Ford",
+                "Ford F350 Stair Truck": "Ford",
+                "Ford Fiesta WRC": "Ford",
+                "Ford Mondeo BTCC": "Ford",
+                "Ford Mustang": "Ford",
+                "Ford Sierra RS500 DTM": "Ford",
+                "Ford Spec Racer": "SCCA",
+                "Ford Transit": "Ford",
+                "Formula Argentina": "Tito",
+                "Ginetta G40 GT5": "Ginetta",
+                "Ginetta G55 GT3": "Ginetta",
+                "Ginetta G55 GT4": "Ginetta",
+                "Ginetta G55 SuperCup": "Ginetta",
+                "Honda Accord BTCC": "Honda",
+                "Honda Acty": "Honda",
+                "Honda Civic Type R EP3": "Honda",
+                "KRB Audi S1 Silhouette": "Audi",
+                "KTM X-BOW GT4": "KTM",
+                "KTM X-BOW R": "KTM",
+                "Lada Revolution S2": "Lada",
+                "Lamborghini Huracan GT3": "Lamborghini",
+                "Lancia Fulvia S1": "Lancia",
+                "Legends Car": "Legends Car",
+                "Ligier JS8 S1": "Ligier",
+                "Lola T70 MKII": "Lola",
+                "Lotus 25": "Lotus",
+                "Lotus 3-Eleven": "Lotus",
+                "Lotus 49": "Lotus",
+                "Lotus 72D": "Lotus",
+                "Lotus 98T": "Lotus",
+                "Lotus Elise SC S2": "Lotus",
+                "Lotus Evora GX": "Lotus",
+                "Lotus Exos 125": "Lotus",
+                "Maserati 250F": "Maserati",
+                "Maserati Tipo 61 Birdcage": "Maserati",
+                "Mazda 787B": "Mazda",
+                "Mazda Miata NA": "Mazda",
+                "Mazda MX-5 Cup": "Mazda",
+                "Mazda RX-7 Spirit R": "Mazda",
+                "McLaren 650S GT3": "McLaren",
+                "McLaren MP4-12C GT3": "McLaren",
+                "McLaren MP4-20": "McLaren",
+                "McLaren MP4-22": "McLaren",
+                "Mercedes-Benz 190E EVO II": "Mercedes-Benz",
+                "Mercedes-Benz AMG GT3": "Mercedes-Benz",
+                "Mercedes-Benz C9 LM": "Mercedes-Benz",
+                "Mercedes-Benz CLR LM": "Mercedes-Benz",
+                "Mercedes-Benz SLS AMG GT3": "Mercedes-Benz",
+                "Metalex MTX1-06": "Metalex",
+                "Mini Cooper JCW Challenge": "Mini",
+                "Mitsubishi Lancer EVO VIII": "Mitsubishi",
+                "Nissan GTR GT3": "Nissan",
+                "Nissan Primera BTCC": "Nissan",
+                "Oreca FLM09": "Oreca",
+                "Pagani Huayra": "Pagani",
+                "Pagani Zonda R": "Pagani",
+                "Panoz LMP01 Evo": "Panoz",
+                "Peugeot 106 Rallye S2": "Peugeot",
+                "Piaggio Ape Terrorcarro": "Piaggio",
+                "Porsche 908 LH": "Porsche",
+                "Porsche 911 GT America": "Porsche",
+                "Porsche 911 GT3 Cup": "Porsche",
+                "Porsche 911 GT3 R": "Porsche",
+                "Porsche 911 R": "Porsche",
+                "Porsche 911 RSR": "Porsche",
+                "Porsche 911 Singer": "Porsche",
+                "Porsche 962C Long Tail": "Porsche",
+                "Porsche 962C Short Tail": "Porsche",
+                "Porsche Cayman GT4 Clubsport": "Porsche",
+                "Praga R1": "Praga",
+                "Radical SR3": "Radical",
+                "Renault Clio Cup": "Renault",
+                "Renault R25": "Renault",
+                "Renault RS01": "Renault",
+                "Russell Alexis": "Russell Alexis",
+                "Seat Cupra TCR": "Seat",
+                "Seat Leon TCR": "Seat",
+                "Skip Barber": "Skip Barber",
+                "Skoda 130 RS": "Skoda",
+                "Skoda Octavia Cup": "Skoda",
+                "Subaru WRX Impreza GG SW": "Subaru",
+                "Sunbeam Grand Prix": "Sunbeam",
+                "TARK Estonia-25": "TARK",
+                "Tatuus FA01": "Tatuus",
+                "Toyota AE86 Tuned": "Toyota",
+                "Toyota GT86": "Toyota",
+                "Toyota S-FR": "Toyota",
+                "Toyota Sera GT": "Toyota",
+                "Toyota Supra GT500": "Toyota",
+                "Toyota TS040 Hybrid": "Toyota",
+                "Trabant 601 RS": "Trabant",
+                "Vauxhall Vectra BTCC": "Vauxhall",
+                "Volkswagen Funcup Gen I": "Volkswagen",
+                "Volvo S40 BTCC": "Volvo",
+                "VRC ARC Chevrette 28": "Chevrolet",
+                "VRC ARC Chevrette TA2": "Chevrolet",
+                "Williams FW14": "Williams"
+
+            };
+
+            const manufacturerStats = {
+                wins: {},
+                polePositions: {},
+                podiums: {},
+                racesDone: {},
+                lapsLed: {}
+            };
+
+            Object.keys(carsData).forEach(car => {
+                const manufacturer = manufacturers[car];
+                if (!manufacturer) return; // Skip if manufacturer not found
+
+                const carStats = carsData[car];
+                manufacturerStats.wins[manufacturer] = (manufacturerStats.wins[manufacturer] || 0) + carStats.winners.length;
+                manufacturerStats.polePositions[manufacturer] = (manufacturerStats.polePositions[manufacturer] || 0) + carStats.qualify.filter(pos => pos === 1).length;
+                manufacturerStats.podiums[manufacturer] = (manufacturerStats.podiums[manufacturer] || 0) + carStats.race.filter(pos => pos <= 3).length;
+                manufacturerStats.racesDone[manufacturer] = (manufacturerStats.racesDone[manufacturer] || 0) + carStats.race.length;
+                manufacturerStats.lapsLed[manufacturer] = (manufacturerStats.lapsLed[manufacturer] || 0) + carStats.lapsLed;
+            });
+
+            return manufacturerStats;
+
+        }
+
+        function calculateNationalityStats(carsData) {
+            const nationality = {
+                "Abarth 500 Assetto Corse": "Italia",
+                "Alfa Romeo 155 TI V6": "Italia",
+                "Alfa Romeo 33TT12": "Italia",
+                "Alfa Romeo 4C": "Italia",
+                "Alfa Romeo Giulia TI Super": "Italia",
+                "Alfa Romeo GTAM": "Italia",
+                "Audi R8 LMS 2016": "Germania",
+                "Audi Sport quattro S1": "Germania",
+                "Audi TT Cup": "Germania",
+                "Audi TT RS VLN": "Germania",
+                "Austin Mini Cooper S": "Regno Unito",
+                "BMW M1 S3": "Germania",
+                "BMW M235i": "Germania",
+                "BMW M3 E30 DTM": "Germania",
+                "BMW M3 E30 S1": "Germania",
+                "BMW Z4 Drift": "Germania",
+                "BMW Z4 GT3": "Germania",
+                "Camotos Kawasaki ER-6": "Spagna",
+                "Caterham Academy": "Regno Unito",
+                "Chevrolet Camaro EuroNascar": "Stati Uniti",
+                "Chevrolet Corvette C6R": "Stati Uniti",
+                "Chevrolet Corvette C7R": "Stati Uniti",
+                "Chevrolet Corvette DP": "Stati Uniti",
+                "Chevrolet Cruze TN": "Stati Uniti",
+                "Cupra Leon Competicion": "Spagna",
+                "Dallara F3 2019": "Italia",
+                "Dallara F317": "Italia",
+                "Dallara GP2/11": "Italia",
+                "Dallara GP3/13": "Italia",
+                "Dallara IL-15": "Italia",
+                "De Tomaso Pantera Gr.4": "Italia",
+                "Delage 15S8 Dick Seaman Special": "Francia",
+                "Dodge Viper RT/10": "Stati Uniti",
+                "Duqueine D08 LMP3": "Francia",
+                "Ferrari 250 GTO": "Italia",
+                "Ferrari 288 GTO": "Italia",
+                "Ferrari 312/67": "Italia",
+                "Ferrari 312T": "Italia",
+                "Ferrari 458 GT2": "Italia",
+                "Ferrari 488 GT3": "Italia",
+                "Ferrari 643": "Italia",
+                "Ferrari F2007": "Italia",
+                "Ferrari LaFerrari": "Italia",
+                "Fiat Panda": "Italia",
+                "Fiat Tipo Competizione": "Italia",
+                "Fiat Tipo Top Car": "Italia",
+                "Ford Escort RS": "Stati Uniti",
+                "Ford F350 Stair Truck": "Stati Uniti",
+                "Ford Fiesta WRC": "Stati Uniti",
+                "Ford Mondeo BTCC": "Stati Uniti",
+                "Ford Mustang": "Stati Uniti",
+                "Ford Sierra RS500 DTM": "Stati Uniti",
+                "Ford Spec Racer": "Stati Uniti",
+                "Ford Transit": "Stati Uniti",
+                "Formula Argentina": "Argentina",
+                "Ginetta G40 GT5": "Regno Unito",
+                "Ginetta G55 GT3": "Regno Unito",
+                "Ginetta G55 GT4": "Regno Unito",
+                "Ginetta G55 SuperCup": "Regno Unito",
+                "Honda Accord BTCC": "Giappone",
+                "Honda Acty": "Giappone",
+                "Honda Civic Type R EP3": "Giappone",
+                "KRB Audi S1 Silhouette": "Germania",
+                "KTM X-BOW GT4": "Austria",
+                "KTM X-BOW R": "Austria",
+                "Lada Revolution S2": "Russia/Unione Sovietica",
+                "Lamborghini Huracan GT3": "Italia",
+                "Lancia Fulvia S1": "Italia",
+                "Legends Car": "Stati Uniti",
+                "Ligier JS8 S1": "Francia",
+                "Lola T70 MKII": "Regno Unito",
+                "Lotus 25": "Regno Unito",
+                "Lotus 3-Eleven": "Regno Unito",
+                "Lotus 49": "Regno Unito",
+                "Lotus 72D": "Regno Unito",
+                "Lotus 98T": "Regno Unito",
+                "Lotus Elise SC S2": "Regno Unito",
+                "Lotus Evora GX": "Regno Unito",
+                "Lotus Exos 125": "Regno Unito",
+                "Maserati 250F": "Italia",
+                "Maserati Tipo 61 Birdcage": "Italia",
+                "Mazda 787B": "Giappone",
+                "Mazda Miata NA": "Giappone",
+                "Mazda MX-5 Cup": "Giappone",
+                "Mazda RX-7 Spirit R": "Giappone",
+                "McLaren 650S GT3": "Regno Unito",
+                "McLaren MP4-12C GT3": "Regno Unito",
+                "McLaren MP4-20": "Regno Unito",
+                "McLaren MP4-22": "Regno Unito",
+                "Mercedes-Benz 190E EVO II": "Germania",
+                "Mercedes-Benz AMG GT3": "Germania",
+                "Mercedes-Benz C9 LM": "Germania",
+                "Mercedes-Benz CLR LM": "Germania",
+                "Mercedes-Benz SLS AMG GT3": "Germania",
+                "Metalex MTX1-06": "Repubblica Ceca/Cecoslovacchia",
+                "Mini Cooper JCW Challenge": "Regno Unito",
+                "Mitsubishi Lancer EVO VIII": "Giappone",
+                "Nissan GTR GT3": "Giappone",
+                "Nissan Primera BTCC": "Giappone",
+                "Oreca FLM09": "Francia",
+                "Pagani Huayra": "Italia",
+                "Pagani Zonda R": "Italia",
+                "Panoz LMP01 Evo": "Stati Uniti",
+                "Peugeot 106 Rallye S2": "Francia",
+                "Piaggio Ape Terrorcarro": "Italia",
+                "Porsche 908 LH": "Germania",
+                "Porsche 911 GT America": "Germania",
+                "Porsche 911 GT3 Cup": "Germania",
+                "Porsche 911 GT3 R": "Germania",
+                "Porsche 911 R": "Germania",
+                "Porsche 911 RSR": "Germania",
+                "Porsche 911 Singer": "Germania",
+                "Porsche 962C Long Tail": "Germania",
+                "Porsche 962C Short Tail": "Germania",
+                "Porsche Cayman GT4 Clubsport": "Germania",
+                "Praga R1": "Repubblica Ceca/Cecoslovacchia",
+                "Radical SR3": "Regno Unito",
+                "Renault Clio Cup": "Francia",
+                "Renault R25": "Francia",
+                "Renault RS01": "Francia",
+                "Russell Alexis": "Stati Uniti",
+                "Seat Cupra TCR": "Spagna",
+                "Seat Leon TCR": "Spagna",
+                "Skip Barber": "Stati Uniti",
+                "Skoda 130 RS": "Repubblica Ceca/Cecoslovacchia",
+                "Skoda Octavia Cup": "Repubblica Ceca/Cecoslovacchia",
+                "Subaru WRX Impreza GG SW": "Giappone",
+                "Sunbeam Grand Prix": "Regno Unito",
+                "TARK Estonia-25": "Russia/Unione Sovietica",
+                "Tatuus FA01": "Italia",
+                "Toyota AE86 Tuned": "Giappone",
+                "Toyota GT86": "Giappone",
+                "Toyota S-FR": "Giappone",
+                "Toyota Sera GT": "Giappone",
+                "Toyota Supra GT500": "Giappone",
+                "Toyota TS040 Hybrid": "Giappone",
+                "Trabant 601 RS": "Germania",
+                "Vauxhall Vectra BTCC": "Regno Unito",
+                "Volkswagen Funcup Gen I": "Germania",
+                "Volvo S40 BTCC": "Svezia",
+                "VRC ARC Chevrette 28": "Stati Uniti",
+                "VRC ARC Chevrette TA2": "Stati Uniti",
+                "Williams FW14": "Regno Unito",
+            };
+
+
+            const nationalityStats = {
+                wins: {},
+                polePositions: {},
+                podiums: {},
+                racesDone: {},
+                lapsLed: {}
+            };
+
+            Object.keys(carsData).forEach(car => {
+                console.log("Processing car:", car);
+                const nation = nationality[car];
+                console.log("Nation:", nation);
+                if (!nation) {
+                    console.log("Nation not found for car:", car);
+                    return; // Skip if nationality not found
+                }
+
+                const carStats = carsData[car];
+                nationalityStats.wins[nation] = (nationalityStats.wins[nation] || 0) + carStats.winners.length;
+                nationalityStats.polePositions[nation] = (nationalityStats.polePositions[nation] || 0) + carStats.qualify.filter(pos => pos === 1).length;
+                nationalityStats.podiums[nation] = (nationalityStats.podiums[nation] || 0) + carStats.race.filter(pos => pos <= 3).length;
+                nationalityStats.racesDone[nation] = (nationalityStats.racesDone[nation] || 0) + carStats.race.length;
+                nationalityStats.lapsLed[nation] = (nationalityStats.lapsLed[nation] || 0) + carStats.lapsLed;
+            });
+
+            return nationalityStats;
+        }
+
+        function generateTable(data, tableId) {
+            const filteredData = Object.entries(data)
+                .filter(([key, value]) => value !== 0); // Filter out entries with 0 values
+
+            const sortedData = filteredData.sort((a, b) => {
+                // Sort by value (number) first
+                if (b[1] !== a[1]) {
+                    return b[1] - a[1];
+                } else {
+                    // If numbers are the same, sort alphabetically by key
+                    return a[0].localeCompare(b[0]);
+                }
+            });
+
+            const table = document.getElementById(tableId);
+            table.innerHTML = ''; // Clear existing table
+
+            sortedData.forEach(item => {
+                const row = table.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                cell1.textContent = item[0];
+                cell2.textContent = item[1];
+            });
+        }
+
+    </script>
+</body>
+
+</html>

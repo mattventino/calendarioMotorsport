@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Grouped by Track</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <p><a href="index.html">Back to Homepage</a></p>
+
+    <h2>Results Grouped by Track</h2>
+
+    <h3>Add Tracks</h3>
+    <textarea id="trackInput" rows="5" cols="50" placeholder="Enter Track Names (one per line)"></textarea><br><br>
+
+    <h3>Add Cars</h3>
+    <textarea id="carInput" rows="5" cols="50"
+        placeholder="Enter Cars Raced (comma or newline separated)"></textarea><br><br>
+
+    <h3>Add Qualify Results</h3>
+    <textarea id="qualifyInput" rows="5" cols="50"
+        placeholder="Enter Qualify Results (comma or newline separated)"></textarea><br><br>
+
+    <h3>Add Race Results</h3>
+    <textarea id="raceInput" rows="5" cols="50"
+        placeholder="Enter Race Results (comma or newline separated)"></textarea><br><br>
+
+    <h3>Add Number of Laps Led</h3>
+    <textarea id="lapsLedInput" rows="5" cols="50"
+        placeholder="Enter Number of Laps Led (comma or newline separated)"></textarea><br><br>
+
+    <button onclick="processResults()">Process Results</button>
+
+    <h3>Results by Track</h3>
+    <table id="resultTable">
+        <tr>
+            <th>Track</th>
+            <th>Qualify Results</th>
+            <th>Race Results</th>
+            <th>Cars</th>
+        </tr>
+    </table>
+    <div id="trackCarManufacturerTables">
+
+        <h2>Wins</h2>
+        <h3>Track</h3>
+        <table id="winsTable">
+            <tr>
+                <th>Track</th>
+                <th>Wins</th>
+            </tr>
+        </table>
+
+        <h3>Nation</h3>
+        <table id="winsByNationalityTable">
+            <tr>
+                <th>Track</th>
+                <th>Pole Positions</th>
+            </tr>
+        </table>
+
+        <h2>Pole position</h2>
+        <h3>Track</h3>
+        <table id="polePositionsTable">
+            <tr>
+                <th>Track</th>
+                <th>Podiums</th>
+            </tr>
+        </table>
+
+        <h3>Nation</h3>
+        <table id="polePositionsByNationalityTable">
+            <tr>
+                <th>Track</th>
+                <th>Races</th>
+            </tr>
+        </table>
+
+
+        <h2>Podiums</h2>
+        <h3>Track</h3>
+        <table id="podiumsTable">
+            <tr>
+                <th>Track</th>
+                <th>Laps Led</th>
+            </tr>
+        </table>
+
+        <h3>Nation</h3>
+        <table id="podiumsByNationalityTable">
+            <tr>
+                <th>Nationality</th>
+                <th>Wins</th>
+            </tr>
+        </table>
+
+        <h2>Races</h2>
+        <h3>Track</h3>
+        <table id="racesDoneTable">
+            <tr>
+                <th>Nationality</th>
+                <th>Pole Positions</th>
+            </tr>
+        </table>
+
+        <h3>Nation</h3>
+        <table id="racesDoneByNationalityTable">
+            <tr>
+                <th>Nationality</th>
+                <th>Podiums</th>
+            </tr>
+        </table>
+
+        <h2>Laps led</h2>
+        <h3>Track</h3>
+        <table id="lapsLedTable">
+            <tr>
+                <th>Nationality</th>
+                <th>Races</th>
+            </tr>
+        </table>
+
+        <h3>Nation</h3>
+        <table id="lapsLedByNationalityTable">
+            <tr>
+                <th>Nationality</th>
+                <th>Laps Led</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function processResults() {
+            const trackInput = document.getElementById('trackInput').value.trim().split('\n').map(track => track.trim());
+            const qualifyInput = document.getElementById('qualifyInput').value.trim().split('\n').map(result => result.trim());
+            const raceInput = document.getElementById('raceInput').value.trim().split('\n').map(result => result.trim());
+            const carInput = document.getElementById('carInput').value.trim().split('\n').map(car => car.trim());
+            const lapsLedInput = document.getElementById('lapsLedInput').value.trim().split('\n').map(laps => laps.trim());
+
+            const tracksData = {};
+
+            for (let i = 0; i < trackInput.length; i++) {
+                const track = trackInput[i];
+                const qualifyResult = qualifyInput[i] ? qualifyInput[i].split(',').map(r => parseInt(r.trim())) : [];
+                const raceResult = raceInput[i] ? raceInput[i].split(',').map(r => parseInt(r.trim())) : [];
+                const cars = carInput[i] ? carInput[i].split(',').map(car => car.trim()) : [];
+                const lapsLed = lapsLedInput[i] ? parseInt(lapsLedInput[i]) : 0;
+
+                if (!tracksData[track]) {
+                    tracksData[track] = {
+                        qualify: [],
+                        race: [],
+                        cars: new Set(),
+                        winners: [],
+                        lapsLed: 0
+                    };
+                }
+
+                tracksData[track].qualify = tracksData[track].qualify.concat(qualifyResult);
+                tracksData[track].race = tracksData[track].race.concat(raceResult);
+                cars.forEach(car => tracksData[track].cars.add(car));
+                tracksData[track].lapsLed += lapsLed;
+
+                if (raceResult.includes(1)) {
+                    tracksData[track].winners.push(track);
+                }
+            }
+
+            const trackNames = Object.keys(tracksData).sort((a, b) => a.localeCompare(b));
+
+            const resultTable = document.getElementById('resultTable');
+            resultTable.innerHTML = '';
+
+            trackNames.forEach(track => {
+                const trackData = tracksData[track];
+                const row = resultTable.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                cell1.textContent = track;
+                cell2.textContent = trackData.qualify.sort((a, b) => a - b).map(result => result + '°').join(', ');
+                cell3.textContent = trackData.race.sort((a, b) => a - b).map(result => result + '°').join(', ');
+                cell4.textContent = Array.from(trackData.cars).sort((a, b) => a.localeCompare(b)).join(', ');
+            });
+
+            const trackStats = calculateTrackStats(tracksData);
+            generateTable(trackStats.wins, 'winsTable');
+            generateTable(trackStats.polePositions, 'polePositionsTable');
+            generateTable(trackStats.podiums, 'podiumsTable');
+            generateTable(trackStats.racesDone, 'racesDoneTable');
+            generateTable(trackStats.lapsLed, 'lapsLedTable');
+
+            const nationalityStats = calculateNationalityStats(tracksData);
+            generateTable(nationalityStats.wins, 'winsByNationalityTable');
+            generateTable(nationalityStats.polePositions, 'polePositionsByNationalityTable');
+            generateTable(nationalityStats.podiums, 'podiumsByNationalityTable');
+            generateTable(nationalityStats.racesDone, 'racesDoneByNationalityTable');
+            generateTable(nationalityStats.lapsLed, 'lapsLedByNationalityTable');
+        }
+
+        function calculateTrackStats(tracksData) {
+            const stats = {
+                wins: {},
+                polePositions: {},
+                podiums: {},
+                racesDone: {},
+                lapsLed: {}
+            };
+
+            Object.keys(tracksData).forEach(track => {
+                const trackStats = tracksData[track];
+                stats.wins[track] = trackStats.winners.length;
+                stats.polePositions[track] = trackStats.qualify.filter(pos => pos === 1).length;
+                stats.podiums[track] = trackStats.race.filter(pos => pos <= 3).length;
+                stats.racesDone[track] = trackStats.race.length;
+                stats.lapsLed[track] = trackStats.lapsLed;
+            });
+
+            return stats;
+        }
+
+        function calculateNationalityStats(tracksData) {
+            const stats = {
+                wins: {},
+                polePositions: {},
+                podiums: {},
+                racesDone: {},
+                lapsLed: {}
+            };
+
+            const nationalityByTrack = {
+                "Adelaide": "Australia",
+                "Ahvenisto": "Finlandia",
+                "Ahvenisto Classic": "Finlandia",
+                "Anglesey": "Regno Unito",
+                "Assen Autosport": "Paesi Bassi",
+                "Assen Motorsport": "Paesi Bassi",
+                "Autopolis GP": "Giappone",
+                "Bahrain Inner": "Bahrain",
+                "Barbagallo": "Australia",
+                "Barber": "Stati Uniti",
+                "Barcellona GP": "Spagna",
+                "Barcellona Moto": "Spagna",
+                "Bikernieki Oval": "Lettonia",
+                "Bikernieki Ring of Skill": "Lettonia",
+                "Bikernieki Speed": "Lettonia",
+                "Black Cat Long": "Stati Uniti",
+                "Black Cat Short": "Stati Uniti",
+                "Brainerd Classic": "Stati Uniti",
+                "Brands Hatch GP": "Regno Unito",
+                "Brands Hatch Indy": "Regno Unito",
+                "Bremgarten": "Svizzera",
+                "Bridgehampton": "Stati Uniti",
+                "Buenos Aires N°12": "Argentina",
+                "Buriram": "Thailandia",
+                "Cadwell Park Full": "Regno Unito",
+                "Calabogie": "Canada",
+                "Calabogie Stadium": "Canada",
+                "Castle Combe": "Regno Unito",
+                "Chambley": "Francia",
+                "Charade GP": "Francia",
+                "Charade Long": "Francia",
+                "Croft": "Regno Unito",
+                "Crystal Palace": "Regno Unito",
+                "Daytona Road Course": "Stati Uniti",
+                "Deutschlandring": "Germania",
+                "Donington Classic": "Regno Unito",
+                "Donington GP": "Regno Unito",
+                "Donington National": "Regno Unito",
+                "Edmonton": "Canada",
+                "Esibu East": "Giappone",
+                "Esibu West": "Giappone",
+                "Feldbergring": "Germania",
+                "Fort Grozniy": "Russia",
+                "Fuji GP": "Giappone",
+                "Fuji Speedway Classic": "Giappone",
+                "Gnoo Blas": "Australia",
+                "Goodwood": "Regno Unito",
+                "Grobnik": "Croazia",
+                "High Plains Full": "Stati Uniti",
+                "Highlands": "Regno Unito",
+                "Highlands Drift": "Regno Unito",
+                "Highlands Full": "Regno Unito",
+                "Hockenheim Classic": "Germania",
+                "Hockenheim GP": "Germania",
+                "Hockenheim National": "Germania",
+                "Hockenheim Short 1": "Germania",
+                "Hockenheim Short 2": "Germania",
+                "Imola": "Italia",
+                "Indianapolis Oval Classic": "Stati Uniti",
+                "Interlagos": "Brasile",
+                "Islip Speedway": "Stati Uniti",
+                "Jacarepagua Classic": "Brasile",
+                "Jacarepagua Classic Short": "Brasile",
+                "Jerez GP": "Spagna",
+                "Kemora": "Finlandia",
+                "Kyalami": "Sud Africa",
+                "Laguna Seca": "Stati Uniti",
+                "Lausitzring GP": "Germania",
+                "Le Mans": "Francia",
+                "Le Mans Classic": "Francia",
+                "Ledenon": "Francia",
+                "Lime Rock Park Chicane": "Stati Uniti",
+                "Longford": "Australia",
+                "Magione": "Italia",
+                "Martinsville Speedway": "Stati Uniti",
+                "Mas Du Clos": "Francia",
+                "Milwaukee": "Stati Uniti",
+                "Miramas Classic": "Francia",
+                "Misano": "Italia",
+                "Modena": "Italia",
+                "Modena Fast": "Italia",
+                "Monaco Classic 80s": "Monaco",
+                "Mont Tremblant Classic": "Canada",
+                "Montreal": "Canada",
+                "Monza": "Italia",
+                "Monza Classic Full": "Italia",
+                "Monza Classic Junior": "Italia",
+                "Mosport": "Canada",
+                "Most": "Repubblica Ceca",
+                "Mugello": "Italia",
+                "Nemuno Ziedas": "Lituania",
+                "Neva Ring": "Russia",
+                "New Jersey": "Stati Uniti",
+                "Nordschleife Endurance-Cup": "Germania",
+                "Norisring Classic 50s": "Germania",
+                "Nurburgring Betonschleife": "Germania",
+                "Nurburgring Gesamtstrecke": "Germania",
+                "Nurburgring GP": "Germania",
+                "Nurburgring GP GT": "Germania",
+                "Nurburgring Nordschleife": "Germania",
+                "Nurburgring Sprint": "Germania",
+                "Nurburgring Sprint GT": "Germania",
+                "Nurburgring Sudschleife Classic": "Germania",
+                "Okayama GP": "Giappone",
+                "Okayama Piper": "Giappone",
+                "Oran Park GP": "Australia",
+                "Oran Park South": "Australia",
+                "Orchard Central": "Singapore",
+                "Oschersleben GP": "Germania",
+                "Oulton Park International": "Regno Unito",
+                "Panama": "Panama",
+                "Pascani Motorpark A": "Fictional",
+                "Pau": "Francia",
+                "Paul Ricard 24h": "Francia",
+                "Paul Ricard Blancpain": "Francia",
+                "Paul Ricard WTCC": "Francia",
+                "Portimao": "Portogallo",
+                "Putnam Park": "Stati Uniti",
+                "Red Bull Ring GP": "Austria",
+                "Red Bull Ring National": "Austria",
+                "Riverside Long": "Stati Uniti",
+                "Riverside Nascar": "Stati Uniti",
+                "Riverside Short": "Stati Uniti",
+                "Riverside Spike": "Stati Uniti",
+                "Road America": "Stati Uniti",
+                "Road America Moto": "Stati Uniti",
+                "Road Atlanta": "Stati Uniti",
+                "Road Atlanta Short": "Stati Uniti",
+                "Sachsenring": "Germania",
+                "Sachsenring Short": "Germania",
+                "Sebring": "Stati Uniti",
+                "Sentul": "Indonesia",
+                "Silesia Ring": "Polonia",
+                "Silverstone Classic": "Regno Unito",
+                "Silverstone GP": "Regno Unito",
+                "Silverstone International": "Regno Unito",
+                "Silverstone National": "Regno Unito",
+                "Smolensk Ring": "Russia",
+                "Spa-Francorchamps": "Belgio",
+                "St Petersburg": "Stati Uniti",
+                "Sugo": "Giappone",
+                "Summit Point": "Stati Uniti",
+                "Summit Point Short": "Stati Uniti",
+                "Suzuka": "Giappone",
+                "Suzuka Classic": "Giappone",
+                "Sveg": "Svezia",
+                "Thomson Road": "Singapore",
+                "Thruxton": "Regno Unito",
+                "Tor Poznan": "Polonia",
+                "Tsukuba": "Giappone",
+                "Vallelunga": "Italia",
+                "Vallelunga Classic": "Italia",
+                "Vallelunga Club": "Italia",
+                "Villa Bordeu": "Argentina",
+                "VIR Full": "Stati Uniti",
+                "VIR North": "Stati Uniti",
+                "VIR South": "Stati Uniti",
+                "Watkins Glen": "Stati Uniti",
+                "Watkins Glen Classic": "Stati Uniti",
+                "Watkins Glen No Chicane": "Stati Uniti",
+                "Watkins Glen Short": "Stati Uniti",
+                "Zandvoort": "Paesi Bassi",
+                "Zwartkops": "Sud Africa",
+            };
+
+            Object.keys(tracksData).forEach(track => {
+                const nationality = nationalityByTrack[track];
+                const trackStats = tracksData[track];
+
+                stats.wins[nationality] = (stats.wins[nationality] || 0) + (trackStats.winners.length || 0);
+                stats.polePositions[nationality] = (stats.polePositions[nationality] || 0) + (trackStats.qualify.filter(pos => pos === 1).length || 0);
+                stats.podiums[nationality] = (stats.podiums[nationality] || 0) + (trackStats.race.filter(pos => pos <= 3).length || 0);
+                stats.racesDone[nationality] = (stats.racesDone[nationality] || 0) + (trackStats.race.length || 0);
+                stats.lapsLed[nationality] = (stats.lapsLed[nationality] || 0) + (trackStats.lapsLed || 0);
+            });
+
+            return stats;
+        }
+
+        function generateTable(data, tableId) {
+            const filteredData = Object.entries(data)
+                .filter(([key, value]) => value !== 0);
+
+            const sortedData = filteredData.sort((a, b) => {
+                if (b[1] !== a[1]) {
+                    return b[1] - a[1];
+                } else {
+                    return a[0].localeCompare(b[0]);
+                }
+            });
+
+            const table = document.getElementById(tableId);
+            table.innerHTML = '';
+
+            sortedData.forEach(item => {
+                const row = table.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                cell1.textContent = item[0];
+                cell2.textContent = item[1];
+            });
+        }
+    </script>
+
+    </script>
+</body>
+
+</html>
